@@ -8,7 +8,7 @@ export default function Home() {
       <header className="px-4 lg:px-6 h-16 flex items-center border-b">
         <Link href="/" className="flex items-center gap-2 font-bold text-xl">
           <UtensilsCrossed className="h-6 w-6 text-orange-500" />
-          <span>VIT Food</span>
+          <span>V-EATS</span>
         </Link>
         <nav className="ml-auto flex gap-4 sm:gap-6">
           <Link href="/login" className="text-sm font-medium hover:underline underline-offset-4">
@@ -52,7 +52,7 @@ export default function Home() {
                   <img
                     alt="Students enjoying food"
                     className="object-cover w-full h-full"
-                    src="/placeholder.svg?height=500&width=500"
+                    src="WhatsApp Image 2025-05-19 at 21.18.47_b90ce8ec.jpg/?height=500&width=500"
                     style={{
                       aspectRatio: "1/1",
                       objectFit: "cover",

@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import './globals.css'
-
+import {SessionProvider} from "next-auth/react";
+import ClientSessionProvider from './ClientSessionProvider';
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'V-EATS',
+  description: 'Order ahead from your favorite campus eateries and pick up your food when it is ready.No more waiting in lines!' 
 }
 
 export default function RootLayout({
@@ -14,7 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ClientSessionProvider>{children}</ClientSessionProvider>
+      </body>
     </html>
   )
 }

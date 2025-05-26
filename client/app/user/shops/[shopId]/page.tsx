@@ -1,5 +1,5 @@
 "use client"
-
+import React from 'react';
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -148,9 +148,10 @@ const shops = {
   },
 }
 
-export default function ShopDetailPage({ params }: { params: { shopId: string } }) {
+export default function ShopDetailPage({ params }: { params: Promise<{ shopId: string }> }) {
   const router = useRouter()
-  const { shopId } = params
+   const resolvedParams = React.use(params);
+  const { shopId } = resolvedParams;
   const shop = shops[shopId as keyof typeof shops]
 
   const [selectedCategory, setSelectedCategory] = useState("Recommended")
@@ -230,9 +231,10 @@ export default function ShopDetailPage({ params }: { params: { shopId: string } 
             <div className="pt-16 md:pt-0">
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold">{shop.name}</h1>
-                <Badge variant={shop.status === "Open" ? "success" : "destructive"} className="bg-green-500">
-                  {shop.status}
+                <Badge className={shop.status === "Open" ? "bg-green-500" : "bg-red-500"}>
+                    {shop.status}
                 </Badge>
+
               </div>
               <p className="text-muted-foreground">{shop.description}</p>
               <div className="flex items-center gap-4 mt-2 text-sm">

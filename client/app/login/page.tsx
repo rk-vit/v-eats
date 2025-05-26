@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { UtensilsCrossed } from "lucide-react"
+import { signIn } from "next-auth/react"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -16,26 +17,27 @@ export default function LoginPage() {
   const defaultRole = searchParams.get("role") || "user"
 
   const [isLoading, setIsLoading] = useState(false)
+  const[email,setEmail] = useState("");
+  const [password,setPassword] = useState("");
+  const handleLogin = async(role: string) => {
+    setIsLoading(true);
+    const callBackUrl=role==="user"?"/user/shops":"/shop/dashboard";
 
-  const handleLogin = (role: string) => {
-    setIsLoading(true)
-
+    const res = await signIn("credentials",{
+      email,
+      password,
+      redirect:true,
+     callbackUrl:callBackUrl
+    })
     // Simulate login process
-    setTimeout(() => {
-      setIsLoading(false)
-      if (role === "user") {
-        router.push("/user/shops")
-      } else {
-        router.push("/shop/dashboard")
-      }
-    }, 1500)
+    setIsLoading(false);
   }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
       <Link href="/" className="flex items-center gap-2 mb-8 text-2xl font-bold">
         <UtensilsCrossed className="h-8 w-8 text-orange-500" />
-        <span>VIT Food</span>
+        <span>V-EATS</span>
       </Link>
 
       <Tabs defaultValue={defaultRole} className="w-full max-w-md">
@@ -53,7 +55,7 @@ export default function LoginPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" placeholder="your.email@vitstudent.ac.in" type="email" />
+                <Input id="email" placeholder="your.email@vitstudent.ac.in" type="email"  onChange={(e)=>{e.preventDefault(); setEmail(e.target.value)}}/>
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -62,7 +64,7 @@ export default function LoginPage() {
                     Forgot password?
                   </Link>
                 </div>
-                <Input id="password" type="password" />
+                <Input id="password" type="password" onChange={(e)=>{e.preventDefault(); setPassword(e.target.value)}}/>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col">
@@ -118,7 +120,7 @@ export default function LoginPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="shop-email">Email</Label>
-                <Input id="shop-email" placeholder="your.shop@vit.ac.in" type="email" />
+                <Input id="shop-email" placeholder="your.shop@vit.ac.in" type="email" onChange={(e)=>{e.preventDefault(); setEmail(e.target.value)}} />
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -127,7 +129,7 @@ export default function LoginPage() {
                     Forgot password?
                   </Link>
                 </div>
-                <Input id="shop-password" type="password" />
+                <Input id="shop-password" type="password" onChange={(e)=>{e.preventDefault(); setPassword(e.target.value)}}/>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col">
