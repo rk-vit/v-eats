@@ -7,6 +7,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useSession } from "next-auth/react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,7 +26,7 @@ interface UserLayoutProps {
 export default function UserLayout({ children }: UserLayoutProps) {
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
+  const {data:session,status} = useSession();
   const navigation = [
     { name: "Restaurants", href: "/user/shops", icon: UtensilsCrossed },
     { name: "My Orders", href: "/user/orders", icon: ClipboardList },
@@ -51,7 +52,7 @@ export default function UserLayout({ children }: UserLayoutProps) {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <UtensilsCrossed className="h-6 w-6 text-orange-500" />
-                  <span>VIT Food</span>
+                  <span>V-EATS</span>
                 </Link>
               </div>
               <div className="mt-8 px-7">
@@ -60,8 +61,8 @@ export default function UserLayout({ children }: UserLayoutProps) {
                   <AvatarFallback>RS</AvatarFallback>
                 </Avatar>
                 <div className="mt-2">
-                  <p className="font-medium">Rahul Sharma</p>
-                  <p className="text-sm text-muted-foreground">21BCE1234</p>
+                  <p className="font-medium">{session?.user?.name}</p>
+                  <p className="text-sm text-muted-foreground">{session?.user?.reg_no}</p>
                 </div>
               </div>
               <nav className="mt-6 flex flex-col gap-1 px-2">
@@ -131,8 +132,8 @@ export default function UserLayout({ children }: UserLayoutProps) {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">Rahul Sharma</p>
-                    <p className="text-xs leading-none text-muted-foreground">21BCE1234</p>
+                    <p className="text-sm font-medium leading-none">{session?.user?.name}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{session?.user?.reg_no}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />

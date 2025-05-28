@@ -26,10 +26,10 @@ export default function LoginPage() {
     const res = await signIn("credentials",{
       email,
       password,
+      role,
       redirect:true,
      callbackUrl:callBackUrl
     })
-    // Simulate login process
     setIsLoading(false);
   }
 
