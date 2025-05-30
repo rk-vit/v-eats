@@ -10,8 +10,8 @@ interface MenuItem {
   price: number
   image: string
   category: string
-  isRecommended: boolean
-  isVeg: boolean
+  isrecommended: boolean
+  isveg: boolean
 }
 
 interface MenuItemCardProps {
@@ -31,7 +31,7 @@ export default function MenuItemCard({ item, inCart, quantity = 0, onAdd, onRemo
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-medium">{item.name}</h3>
-                {item.isVeg ? (
+                {item.isveg ? (
                   <div className="h-4 w-4 border border-green-500 flex items-center justify-center">
                     <div className="h-2 w-2 bg-green-500 rounded-full"></div>
                   </div>

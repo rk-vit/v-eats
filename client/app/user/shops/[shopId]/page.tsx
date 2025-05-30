@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,31 @@ import MenuItemCard from "@/components/menu-item-card"
 import TimePicker from "@/components/time-picker"
 
 // Sample data for shops
+
+type MenuItem = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
+  isrecommended: boolean;
+  isveg: boolean;
+};
+type Shop = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  coverimage: string;
+  rating: number;
+  status: string;
+  estimated_time: string;
+  categories: string[];
+  menu: MenuItem[];
+};
+
+
 const shops = {
   gazebo: {
     id: "gazebo",
@@ -21,8 +46,8 @@ const shops = {
     image: "/placeholder.svg?height=80&width=80",
     coverImage: "/placeholder.svg?height=200&width=800&text=Gazebo",
     rating: 4.5,
-    status: "Open",
-    estimatedTime: "15-20 min",
+    status: "open",
+    estimated_time: "15-20 min",
     categories: ["Recommended", "Biryani", "Curry", "Breads", "Desserts"],
     menu: [
       {
@@ -32,8 +57,8 @@ const shops = {
         price: 180,
         image: "/placeholder.svg?height=120&width=120&text=Biryani",
         category: "Biryani",
-        isRecommended: true,
-        isVeg: false,
+        isrecommended: true,
+        isveg: false,
       },
       {
         id: "paneer-butter-masala",
@@ -149,11 +174,49 @@ const shops = {
 }
 
 export default function ShopDetailPage({ params }: { params: Promise<{ shopId: string }> }) {
+  
   const router = useRouter()
    const resolvedParams = React.use(params);
   const { shopId } = resolvedParams;
-  const shop = shops[shopId as keyof typeof shops]
+  //const shop = shops.gazebo;
+  const [shop, setShop] = useState<Shop | null>(null);
+  useEffect(() => {
+    async function fetchShopData() {
+      try {
+        const [shopRes, menuRes] = await Promise.all([
+          fetch(`/api/shops?shop=${encodeURIComponent(shopId)}`),
+          fetch(`/api/shopMenu?shop=${encodeURIComponent(shopId)}`),
+        ]);
+        
+        if (!shopRes.ok || !menuRes.ok) {
+          throw new Error("Failed to fetch shop or menu");
+        }
 
+        const shopData = await shopRes.json(); // Should be Shop without 'menu'
+        const menuData = await menuRes.json(); // Should be { items: MenuItem[] }
+        console.log(menuData);
+        const recommendedCategories = menuData.items
+        .filter((item: MenuItem) => item.isrecommended)
+        .map((item: MenuItem) => item.category);
+        const uniqueCategories = Array.from(
+          new Set(["Recommended",...(shopData.shops[0].tags || []), ...recommendedCategories])
+        );
+
+        const fullShop: Shop = {
+          ...shopData.shops[0],
+          menu: menuData.items,
+          categories: uniqueCategories,
+        };
+
+        console.log(fullShop);
+        setShop(fullShop);
+      } catch (err) {
+        console.error("Error loading shop data:", err);
+      }
+    }
+
+    fetchShopData();
+  }, [shopId]);
   const [selectedCategory, setSelectedCategory] = useState("Recommended")
   const [cart, setCart] = useState<{ [key: string]: { item: any; quantity: number } }>({})
   const [pickupTime, setPickupTime] = useState(15)
@@ -172,7 +235,7 @@ export default function ShopDetailPage({ params }: { params: Promise<{ shopId: s
 
   const filteredMenu =
     selectedCategory === "Recommended"
-      ? shop.menu.filter((item) => item.isRecommended)
+      ? shop.menu.filter((item) => item.isrecommended)
       : shop.menu.filter((item) => item.category === selectedCategory)
 
   const addToCart = (item: any) => {
@@ -210,13 +273,13 @@ export default function ShopDetailPage({ params }: { params: Promise<{ shopId: s
     <UserLayout>
       <div className="relative">
         <div className="h-48 md:h-64 w-full relative">
-          <img src={shop.coverImage || "/placeholder.svg"} alt={shop.name} className="w-full h-full object-cover" />
+          <img src={shop.coverimage || "/placeholder.svg"} alt={shop.name} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
           <Button
             variant="ghost"
             size="icon"
             className="absolute top-4 left-4 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white"
-            onClick={() => router.push("/user/shops")}
+            onClick={() => router.push("/user/shops")}  
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -225,13 +288,13 @@ export default function ShopDetailPage({ params }: { params: Promise<{ shopId: s
         <div className="container mx-auto px-4">
           <div className="relative -mt-16 mb-6 flex items-start gap-4">
             <Avatar className="h-24 w-24 border-4 border-white shadow-md">
-              <AvatarImage src={shop.image || "/placeholder.svg"} alt={shop.name} />
+              <AvatarImage src={`${shop.image}`} alt={shop.name} />
               <AvatarFallback>{shop.name.substring(0, 2)}</AvatarFallback>
             </Avatar>
             <div className="pt-16 md:pt-0">
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold">{shop.name}</h1>
-                <Badge className={shop.status === "Open" ? "bg-green-500" : "bg-red-500"}>
+                <Badge className={shop.status === "open" ? "bg-green-500" : "bg-red-500"}>
                     {shop.status}
                 </Badge>
 
@@ -244,7 +307,7 @@ export default function ShopDetailPage({ params }: { params: Promise<{ shopId: s
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span>{shop.estimatedTime}</span>
+                  <span>{shop.estimated_time}</span>
                 </div>
               </div>
             </div>

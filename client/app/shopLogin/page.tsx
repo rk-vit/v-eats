@@ -20,6 +20,7 @@ export default function SignupPage() {
   const [password,setPassword] = useState("");
   const[shop_no,setShopNo] = useState("");
   const [gstIn,setGstIn] = useState("");
+  const shopId = shopName.toLowerCase();
   const handleSignup = async() => {
     setIsLoading(true)
     try{
@@ -29,6 +30,7 @@ export default function SignupPage() {
           "Content-Type":"application/json"
         },
         body:JSON.stringify({
+          shopId,
           shopName,
           email,
           shop_no,

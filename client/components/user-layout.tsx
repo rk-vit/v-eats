@@ -95,7 +95,7 @@ export default function UserLayout({ children }: UserLayoutProps) {
 
           <Link href="/" className="flex items-center gap-2 font-bold text-xl ml-2 md:ml-0">
             <UtensilsCrossed className="h-6 w-6 text-orange-500" />
-            <span>VIT Food</span>
+            <span>V-EATS</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-6 mx-6">

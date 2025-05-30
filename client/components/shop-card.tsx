@@ -9,9 +9,10 @@ interface ShopCardProps {
     name: string
     description: string
     image: string
+    coverimage:string
     rating: number
     status: string
-    estimatedTime: string
+    estimated_time: string
     tags: string[]
   }
 }
@@ -24,12 +25,12 @@ export default function ShopCard({ shop }: ShopCardProps) {
           <div className="h-40 w-full relative overflow-hidden rounded-t-lg">
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
             <img
-              src={`/placeholder.svg?height=160&width=400&text=${shop.name}`}
+              src={`${shop.coverimage}?height=160&width=400&text=${shop.name}`}
               alt={shop.name}
               className="w-full h-full object-cover"
             />
             <div className="absolute top-2 right-2 z-20">
-              <Badge variant={shop.status === "Open" ? "success" : "destructive"} className="bg-green-500">
+              <Badge variant={shop.status === "open" ? "default" : "destructive"} className="bg-green-500">
                 {shop.status}
               </Badge>
             </div>
@@ -57,7 +58,7 @@ export default function ShopCard({ shop }: ShopCardProps) {
                 <span className="text-yellow-500">★</span>
                 <span className="font-medium">{shop.rating}</span>
               </div>
-              <div className="text-muted-foreground">{shop.estimatedTime} delivery</div>
+              <div className="text-muted-foreground">{shop.estimated_time} delivery</div>
             </div>
           </div>
         </CardContent>

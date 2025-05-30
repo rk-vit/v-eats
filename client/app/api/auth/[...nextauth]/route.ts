@@ -34,9 +34,10 @@ const authOptions: NextAuthOptions = {
 
         let result;
         if (role === "user") {
-          result = await db.query("SELECT * FROM users1 WHERE email=$1 AND role=$2", [email, role]);
+          console.log(email);
+          result = await db.query("SELECT * FROM users1 WHERE email=$1", [email]);
         } else if (role === "shop") {
-          result = await db.query("SELECT * FROM shop WHERE email=$1 AND role=$2", [email, role]);
+          result = await db.query("SELECT * FROM shop WHERE email=$1", [email]);
         } else {
           console.log("Unknown role");
           return null;

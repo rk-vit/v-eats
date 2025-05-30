@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Search, UtensilsCrossed } from "lucide-react"
@@ -8,17 +8,19 @@ import UserLayout from "@/components/user-layout"
 import ShopCard from "@/components/shop-card"
 
 // Sample data for shops
-const shops = [
-  {
-    id: "gazebo",
-    name: "Gazebo",
-    description: "Authentic North Indian cuisine",
-    image: "/placeholder.svg?height=80&width=80",
-    rating: 4.5,
-    status: "Open",
-    estimatedTime: "15-20 min",
-    tags: ["North Indian", "Biryani", "Curry"],
-  },
+type Shop = {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  rating: number;
+  coverimage:string
+  status: string;
+  estimatedTime: string;
+  tags: string[];
+};
+/*
+var defaultShops = [
   {
     id: "sris",
     name: "Sris",
@@ -50,8 +52,30 @@ const shops = [
     tags: ["Multi-cuisine", "Chinese", "Continental"],
   },
 ]
+  */
 
 export default function ShopsPage() {
+  const[loading,setLoading] = useState(true);
+  const [shops,setShops] = useState<Shop[]>([])
+  useEffect(()=>{
+    getShops();
+  },[]);
+  async function getShops(){
+    try{
+    const res = await fetch("/api/shops",{
+        method:"GET",
+        headers:{
+          "Content-Type":"application/json"
+        }
+      })
+      const data = await res.json();
+      setShops(() => [...data.shops])
+    }catch(err){
+      console.log("Some error in fetching shops:", err);
+    }finally{
+      setLoading(false);
+    }
+  }
   const [searchQuery, setSearchQuery] = useState("")
 
   const filteredShops = shops.filter(
@@ -60,7 +84,6 @@ export default function ShopsPage() {
       shop.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       shop.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase())),
   )
-
   return (
     <UserLayout>
       <div className="container mx-auto px-4 py-6">
